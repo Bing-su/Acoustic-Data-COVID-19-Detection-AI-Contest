@@ -1,0 +1,35 @@
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-lightning
+
+  - wandb
+  - pandas
+  - scikit-learn
+  - rich
+  - pillow
+  - matplotlib
+  - pysoundfile
+  - librosa
+
+  - py-cpuinfo
+
+  - black
+  - flake8
+  - flake8-bugbear
+  - isort
+  - mypy
+  - pre-commit
+  - ipykernel
+
+  - pip:
+      - timm
+      # - deepspeed

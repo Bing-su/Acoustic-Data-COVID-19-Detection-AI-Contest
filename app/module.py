@@ -76,7 +76,7 @@ class AudioClassificationModule(pl.LightningModule):
         self.log_dict({"val_loss": loss, "val_f1": f1}, prog_bar=True, on_epoch=True)
         return loss
 
-    def predict_step(self, batch, batch_idx, dataloader_idx):
+    def predict_step(self, batch, batch_idx, dataloader_idx: int = 0):
         pred = self(batch)
         output = torch.argmax(pred, dim=-1)
         return output

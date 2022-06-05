@@ -5,6 +5,8 @@ from timm.optim import create_optimizer_v2
 from torch import nn
 from torchmetrics import F1Score
 
+from .loss import ASLSingleLabel
+
 
 class AudioClassificationModule(pl.LightningModule):
     def __init__(
@@ -31,21 +33,21 @@ class AudioClassificationModule(pl.LightningModule):
 
         self.head = nn.Linear(128 + 32, 2)
 
-        self.loss_fn = nn.CrossEntropyLoss()
-        self.train_f1 = F1Score(num_classes=2)
-        self.val_f1 = F1Score(num_classes=2)
+        self.loss_fn = ASLSingleLabel()
+        self.train_f1 = F1Score(num_classes=2, average="macro")
+        self.val_f1 = F1Score(num_classes=2, average="macro")
 
     def forward(self, batch):
         img, data, _ = batch
         img_emb = self.model(img)  # (batch_size, 128)
 
         age, cat1, cat2, cat3 = data
-        age = age.unsqueeze(1)
+        age_ = age.unsqueeze(1)
         cat1 = self.emb1(cat1)
         cat2 = self.emb2(cat2)
         cat3 = self.emb3(cat3)
 
-        data_cat = torch.cat([age, cat1, cat2, cat3], dim=1)
+        data_cat = torch.cat([age_, cat1, cat2, cat3], dim=1)
         data_emb = self.data_emb(data_cat)  # (batch_size, 32)
 
         x = torch.cat([img_emb, data_emb], dim=1)

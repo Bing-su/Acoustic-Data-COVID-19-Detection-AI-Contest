@@ -28,6 +28,7 @@ def train():
         accelerator="auto",
         gpus=1,
         logger=logger,
+        log_every_n_steps=30,
         callbacks=[RichProgressBar()],
         max_epochs=cfg["epochs"],
         auto_scale_batch_size=True,

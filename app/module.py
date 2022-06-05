@@ -26,6 +26,7 @@ class AudioClassificationModule(pl.LightningModule):
             nn.GELU(),
             nn.Dropout(0.2),
             nn.Linear(64, 32),
+            nn.GELU(),
         )
 
         self.head = nn.Linear(128 + 32, 2)

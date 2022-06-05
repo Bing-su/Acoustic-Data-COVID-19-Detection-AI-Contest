@@ -56,7 +56,7 @@ class AudioDataModule(pl.LightningDataModule):
         super().__init__()
         self.df = df
         self.batch_size = batch_size
-        self.num_workers = 0 if sys.platform != "linux" else 8
+        self.num_workers = 0 if sys.platform != "linux" else 10
 
     def setup(self, stage: Optional[str] = None) -> None:
         train_df, val_df = train_test_split(

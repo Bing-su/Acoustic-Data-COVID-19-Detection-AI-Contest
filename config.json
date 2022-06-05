@@ -2,5 +2,5 @@
     "model_name": "convnext_tiny",
     "optimizer_name": "madgradw",
     "embedding_dim": 8,
-    "epochs": 5
+    "epochs": 3
 }

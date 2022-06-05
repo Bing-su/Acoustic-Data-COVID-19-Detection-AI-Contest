@@ -1,4 +1,5 @@
 import json
+import sys
 
 import pandas as pd
 import pytorch_lightning as pl
@@ -36,12 +37,20 @@ def train():
 
     test_df = pd.read_csv("data/test_df.csv")
     test_dataset = AudioDataset(test_df, train=False)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    num_workers = 0 if sys.platform != "linux" else 10
+    test_loader = DataLoader(
+        test_dataset, batch_size=32, shuffle=False, num_workers=num_workers
+    )
 
     pred = trainer.predict(module, dataloaders=test_loader)
     output = torch.cat(pred, dim=-1)
 
     torch.save(output, "output.pt")
+
+    submission = pd.read_csv("data/sample_submission.csv")
+    output = output.cpu().numpy()
+    submission["covid19"] = output
+    submission.to_csv("submission01.csv", index=False)
 
 
 if __name__ == "__main__":

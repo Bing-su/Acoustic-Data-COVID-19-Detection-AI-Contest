@@ -1,3 +1,4 @@
+import sys
 from typing import Optional
 
 import librosa
@@ -46,7 +47,7 @@ class AudioDataset(Dataset):
             label = self.df.loc[idx, "covid19"]
         else:
             label = -1
-        label = torch.tensor(label, dtype=torch.int)
+        label = torch.tensor(label, dtype=torch.long)
         return spec, (age, gender, respiratory, pain), label
 
 
@@ -55,6 +56,7 @@ class AudioDataModule(pl.LightningDataModule):
         super().__init__()
         self.df = df
         self.batch_size = batch_size
+        self.num_workers = 0 if sys.platform != "linux" else 8
 
     def setup(self, stage: Optional[str] = None) -> None:
         train_df, val_df = train_test_split(
@@ -65,9 +67,19 @@ class AudioDataModule(pl.LightningDataModule):
         self.val_ds = AudioDataset(val_df, train=False)
 
     def train_dataloader(self):
-        loader = DataLoader(self.train_ds, batch_size=self.batch_size, shuffle=True)
+        loader = DataLoader(
+            self.train_ds,
+            batch_size=self.batch_size,
+            shuffle=True,
+            num_workers=self.num_workers,
+        )
         return loader
 
     def val_dataloader(self):
-        loader = DataLoader(self.val_ds, batch_size=self.batch_size, shuffle=False)
+        loader = DataLoader(
+            self.val_ds,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=self.num_workers,
+        )
         return loader
